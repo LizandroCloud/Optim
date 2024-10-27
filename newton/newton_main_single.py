@@ -19,8 +19,8 @@ tol     -> tolerance
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-from examples import *
+import matplotlib.pyplot as plt #matplotlib package
+from examples import * # examples of optimization algorithm
 
 def fplot(func, opt, xi, x_opt, xpmin, xpmax):
     if opt=='max':
