@@ -23,7 +23,16 @@ import matplotlib.pyplot as plt
 
 # Função objetivo
 def func(x):
-    return x**2 - x
+    teta = 10
+    b = 0.287
+    p1 = 1.0 
+    p2 = 1.3
+    p4 = 10.0
+    p3 = x
+    # P = (min(0,g1))**2 + (min(0,g2))**2
+    f = ( (p2 / p1)**b + (p3 / p2)**b + (p4/p3)**b - 3 )
+    return f
+    # print(P)
 
 # Primeira derivada
 def derive1(x,h):
@@ -55,13 +64,13 @@ def newton(x0, maxiter=5000, tol=1e-4, func_tol=1e-4, h=1e-5):
     return x_novo  # retorna o último valor
 
 # Valores dos parâmetros
-x0 = 3
+x0 = 1.5
 
 # Chamada da função
 x_opt = newton(x0)
 
 # Plotagem
-x = np.linspace(-10, 10, 400)
+x = np.linspace(0.1, 25, 400)
 fig, ax = plt.subplots()
 ax.plot(x, func(x), label="Função Objetivo")
 ax.plot(x_opt, func(x_opt), marker='*', markersize=10, color='red', label="Ponto Ótimo")

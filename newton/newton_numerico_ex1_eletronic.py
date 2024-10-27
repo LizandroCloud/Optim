@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 
 # Função objetivo
 def func(x):
-    return x**2 - x
+    return -( 125 - 50*x  + 5*x**2 ) * 100 / ( (1 + 0.5*(1.5*x**-3)*(0.25) )**4 )
 
 # Primeira derivada
 def derive1(x,h):
@@ -36,7 +36,7 @@ def derive2(x,h):
     return df2dx2
 
 # Função principal do Método de Newton
-def newton(x0, maxiter=5000, tol=1e-4, func_tol=1e-4, h=1e-5):
+def newton(x0, maxiter=5000, tol=1e-4, func_tol=1e-5, h=1e-6):
     x = x0  # estimativa inicial
 
     for i in range(maxiter):  # dentro do número de iterações...
@@ -55,16 +55,16 @@ def newton(x0, maxiter=5000, tol=1e-4, func_tol=1e-4, h=1e-5):
     return x_novo  # retorna o último valor
 
 # Valores dos parâmetros
-x0 = 3
+x0 = 1.5
 
 # Chamada da função
 x_opt = newton(x0)
 
 # Plotagem
-x = np.linspace(-10, 10, 400)
+x = np.linspace(0.5, 6, 400)
 fig, ax = plt.subplots()
-ax.plot(x, func(x), label="Função Objetivo")
-ax.plot(x_opt, func(x_opt), marker='*', markersize=10, color='red', label="Ponto Ótimo")
+ax.plot(x, -func(x), label="Função Objetivo")
+ax.plot(x_opt, -func(x_opt), marker='*', markersize=10, color='red', label="Ponto Ótimo")
 ax.axhline(0, color='black', lw=0.5, ls='--')
 ax.axvline(0, color='black', lw=0.5, ls='--')
 ax.grid()

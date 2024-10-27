@@ -46,6 +46,7 @@ def n_derive1(x1,x2):
     
     return grad
 
+# Segunda derivada
 def n_derive2(x1,x2):
  
     
@@ -56,7 +57,7 @@ def n_derive2(x1,x2):
     H = np.array([g_x0,g_x1])
     return H
 
-
+# Algoritmo Principal
 def steepest(x, alpha, maxiter, tol):
     x1=x[0]
     x2=x[1]

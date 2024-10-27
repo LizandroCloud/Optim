@@ -1,0 +1,120 @@
+# -*- coding: utf-8 -*-
+"""
+Universidade Federal Fluminense
+Departamento de Engenharia Química e de Petróleo
+Lizandro de Sousa Santos
+E-mail: lizandrosousa@id.uff.br
+"""
+
+"""
+Método das Direcoes Conjugadas
+
+x0-> estimativa inicial
+derive1 -> primeira derivada da função
+derive2 -> segunda derivada da função
+alpha -> passo da otimização (learning rate)
+maxiter -> número máximo de iterações
+tol -> tolerância para convergência    
+
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits import mplot3d
+import numpy as np
+pmax = 0.5 # valor mínimo de x para plotar
+pmin = -0.5 # valor máximo de x para plotar
+
+# Função objetivo
+def func(x):
+    return  (x[0]**2 +x[1]**2)
+
+# Primeira derivada
+def derive1(x):
+    xa = np.array([x[0]+h,x[1]])
+    g1 = (func(xa) - func(x)) / h
+    xb = np.array([x[0],x[1]+(h)])
+    g2 = (func(xb) - func(x)) / (h)
+    # f= np.array([2*x[0], 50*x[1]])
+    return np.array([g1, g2])
+
+def gc(x0, alpha, beta, v, maxiter, tol):
+    x=x0 # estimativa inicial
+    yi=[] # auxiliar para plotagem
+    for i in range(maxiter): # dentro do número de iterações...
+        
+        d1 = -derive1(x) # cálculo da derivada primeira no ponto inicial
+        x2 = x + alpha*d1 # cálculo do próximo ponto
+        beta = ( np.dot(derive1(x2),derive1(x2)) ) / ( np.dot(derive1(x2),derive1(x)) ) # cálculo do beta
+        #yd=derive1(x2) - derive1(x)
+        #beta = ( np.dot(derive1(x),yd) ) / ( np.dot(derive1(x2),derive1(x)) ) # cálculo do beta
+        d2 = -derive1(x)+beta*d1 # derivada no segundo ponto
+        x_novo = x + alpha*d2 # atualização do valor
+        if np.linalg.norm(x_novo-x) < tol: # se a tolerância for estabelecida...
+            print("algoritmo convergiu para x=", x_novo)
+            
+            return x_novo # retorna o valor atual
+            break # interrompe
+        x = x_novo # caso contrário, atualiza valor e continua
+        print("Iteração", i)
+        print("x =", x)
+        # plotagem
+    #     yi.append(x) # gravando os valores..
+    # fig, ax = plt.subplots()
+    # yii = np.array(yi)
+    # plt.plot(yii[:,0],yii[:,1])
+    # ax.plot(yii[-1,0],yii[-1,1],marker='o',color = 'blue')
+        ax.plot(x[0],x[1],marker='o',color = 'red')
+    return x # no final retorna o último valor
+
+# Valores dos parâmetros
+x0 = np.array([0.2,0.2])
+alpha = 0.1
+beta = 0.9
+v = np.zeros(len(x0))
+h=1e-4
+# Chamada da função:
+    
+# xopt-> ponto ótimo    
+x1 = np.outer(np.linspace(pmin, pmax, 128), np.ones(128))
+x2 = x1.copy().T # transpose
+A=np.array([x1,x2])
+z = func(A) 
+fig, ax = plt.subplots()
+cs = ax.contour(x1,x2,z ,levels=1000,extend='both')
+ax.clabel(cs, inline=1, fontsize=10)
+ax.set_title('curvas de nivel')
+ax.set_xlabel('x1')
+ax.set_ylabel('x2')
+    
+x_opt = gc(x0, alpha, beta, v,  maxiter=5000, tol=0.0000001)
+
+
+# # Criando figura
+fig = plt.figure(figsize =(14, 9))
+ax = plt.axes(projection ='3d')
+
+
+x1 = np.outer(np.linspace(pmin, pmax, 128), np.ones(128))
+x2 = x1.copy().T # transpose
+A=np.array([x1,x2])
+z = func(A) 
+# Criando o grafico
+ax.plot_surface(x1, x2, z)
+# ax.plot(x_opt, func(x_opt), marker='o', label="ponto ótimo")
+# ax.grid()
+ax.set_xlabel("x1")
+ax.set_ylabel("x2")
+ax.set_zlabel("z")
+
+
+
+fig2, ax2 = plt.subplots(1,1)
+cp2 = ax2.contourf(x1,x2,z)
+fig2.colorbar(cp2) # Add a colorbar to a plot
+ax2.set_title('Curvas de Nível')
+ax2.set_xlabel('x1')
+ax2.set_ylabel('x2')
+
+
+plt.show()

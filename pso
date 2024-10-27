@@ -1,0 +1,106 @@
+"""
+Universidade Federal Fluminense
+Departamento de Engenharia Química e de Petróleo
+Lizandro de Sousa Santos
+E-mail: lizandrosousa@id.uff.br
+"""
+
+"""
+Algoritmo Enxame de Partículas
+
+"""
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+xmin=np.array([-5,-5]) # Limites Mínimos
+xmax=np.array([5,5]) # Limites Máximos
+H=abs(xmax-xmin) # Diferença entre máximo e mínimo
+N=20 # Número de Partículas
+# Parâmetros de Sintonia
+c1=2 
+c2=2
+D=2 # Dimensão do problema (número de variáveis de decisão)
+tmax = 500 # Número Máximo de Iterações
+
+# Definicação da Fobj
+def objective_function(x):
+    y= (x[0]-2)**4 + (x[0]-2)**2*(x[1]**2)+(x[1]+1)**2
+    return y
+
+#Inicialização dos parâmetros
+x=np.zeros((N,D))
+X=np.zeros(N)
+p=np.zeros((N,D))
+P=np.zeros(N)
+v=np.zeros((N,D))
+for i in range(N):
+    for d in range(D):
+        x[i,d]=xmin[d]+(xmax[d]- xmin[d])*np.random.uniform(0,1)
+        #v[i,d]= -H[d]+2*H[d]*np.random.uniform(0,1)   
+        v[i,d]=0
+    X[i]= objective_function(x[i,:])
+    p[i,:]=x[i,:] 
+    P[i]=X[i]
+    
+    if i==0:
+        g=np.copy(p[0,:])   ############
+        G=P[0]
+    
+    if P[i]<G:
+        g=np.copy(p[i,:])    ####################
+        G=P[i]
+
+# Plotando o domínio de cálculo
+fig, axs = plt.subplots(2, 2, gridspec_kw={'hspace': 0.7, 'wspace': 0.7})
+axs[0, 0].plot(x[:,0],x[:,1],'ro')
+axs[0, 0].set_title('Initial Situation')
+
+#Iterações
+tmax=500
+for tatual in range(tmax):
+    for i in range(N):
+        R1=np.random.uniform(0,1)
+        R2=np.random.uniform(0,1)
+        wmax=0.9
+        wmin=0.4
+        w=wmax-(wmax-wmin)*tatual/tmax
+        v[i,:]=w*v[i,:]+ c1*R1*(p[i,:]-x[i,:])+c2*R2*(g-x[i,:])
+        x[i,:]=x[i,:]+v[i,:]
+        for d in range(D):
+            if x[i,d]<xmin[d]:
+                x[i,d]=xmin[d]
+                v[i,d]=0
+            
+            if x[i,d]>xmax[d]:
+                x[i,d]=xmax[d]
+                v[i,d]=0
+        
+        X[i]=objective_function(x[i,:])
+        if X[i]<P[i]:
+            p[i,:]=x[i,:]
+            P[i]=X[i]
+            if P[i]< G:
+                g=np.copy(p[i,:])  ####################3
+                G=P[i]
+                
+        if tatual==49:
+            axs[0, 1].plot(x[:,0],x[:,1],'ro')
+            axs[0, 1].set_title('Iteration 20')
+                
+        if tatual==99:
+            axs[1, 0].plot(x[:,0],x[:,1],'ro')
+            axs[1, 0].set_title('Iteration 100')
+            
+        if tatual==499:
+            axs[1, 1].plot(x[:,0],x[:,1],'ro')
+            axs[1, 1].set_title('I 499')
+            
+          
+for ax in axs.flat:
+    ax.set(xlabel='x1', ylabel='x2')
+
+
+print(g)
+print(objective_function(g))
+        
